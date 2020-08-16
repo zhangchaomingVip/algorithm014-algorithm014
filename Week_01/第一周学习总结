@@ -1,0 +1,179 @@
+第一周学习总结：
+
+1.双指针解法：
+
+双指针，双指针又可分为快慢和碰撞两种
+
+1.1快慢双指针法的题目：
+
+	移动零
+
+      public void moveZeroes(int[] nums) {
+            int j = 0;
+            for (int i = 0; i < nums.length; i++) {
+                if (nums[i] != 0) {
+                    int temp = nums[i];
+                    nums[i] = nums[j];
+                    nums[j++] = temp;
+                }
+            }
+        }
+
+	删除排序数组重复项
+
+    public int removeDuplicates(int[] nums) {
+        int i = 0;
+        for (int n : nums) {
+            while (i == 0 || n > nums[i - 1])
+                nums[i++] = n; 
+        }
+        return i;
+    }
+
+	反转链表
+
+    public ListNode reverseList(ListNode head) {
+        ListNode prev = null;
+        ListNode cur = head;
+        while (cur != null) {
+            ListNode temp = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = temp;
+        }
+        return prev;
+    }
+
+	环形链表
+
+    public ListNode detectCycle(ListNode head) {
+        if(head == null || head.next == null) return null;
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if(fast == slow) {
+                fast = head;
+                while (fast != slow) {
+                    slow = slow.next;
+                    fast = fast.next;
+                }
+            }
+        }
+        return null;
+    }
+
+1.2碰撞双指针法的题目：
+
+	盛水最多的容器
+
+    public int maxArea(int[] height) {
+        int i = 0;
+        int j = height.length - 1;
+        int maxArea = 0;
+        while (i < j) {
+            int minHeight = height[i] > height[j] ? height[j--] : height[i++];
+            maxArea = Math.max( (j - i + 1) * minHeight,maxArea);
+        }
+        return maxArea;
+    }`
+
+	三数之和
+
+     public List<List<Integer>> threeSum(int[] nums) {
+            Arrays.sort(nums);
+            List<List<Integer>> res = new ArrayList<>();
+            if(nums.length < 3) return res;
+            for (int i = 0; i < nums.length; i++) {
+                if(i > 0 && nums[i] == nums[i - 1]) continue;
+                if(nums[i] > 0) break;
+                int j = i + 1;
+                int k = nums.length - 1;
+                while (j < k) {
+                    int sum = nums[i] + nums[j] + nums[k];
+                    if (sum == 0) {
+                        res.add(Arrays.asList(nums[i],nums[j],nums[k]));
+                        j++;
+                        while (j < k && nums[j] == nums[j - 1] ) j++;
+                        k--;
+                        while (j < k && nums[k] == nums[k + 1]) k--;
+                    } else if (sum > 0) {
+                        k--;
+                        while (j < k && nums[k] == nums[k + 1]) k--;
+                    } else if (sum < 0) {
+                        j++;
+                        while (j < k && nums[j] == nums[j - 1] ) j++;
+                    }
+                }
+            }
+            return res;
+        }
+
+2.特殊解法的题目：
+
+2.1.数组替换Map：
+
+当map的key在一定范围内且有一定顺序时，可以转用数组来映射
+
+猜数字游戏：key在0-9范围内，只需要int[10]的空间即可
+
+    public String getHint(String secret, String guess) {
+            StringBuilder res = new StringBuilder();
+            int bullCount = 0;
+            int cowCount = 0;
+            int[] sArr = new int[10];
+            int[] gArr = new int[10];
+            for (int i = 0; i < secret.length(); i++) {
+                if(secret.charAt(i) == guess.charAt(i)) {
+                    bullCount++;
+                }else {
+                    sArr[secret.charAt(i) - '0']++;
+                    gArr[guess.charAt(i) - '0']++;
+                }
+            }
+            for (int i = 0; i < sArr.length; i++) {
+                cowCount += Math.min(sArr[i],gArr[i]);
+            }
+            return res.append(bullCount).append("A").append(cowCount).append("B").toString();
+    }
+
+2.2旋转数组实现移动：
+
+旋转数组
+
+      public void rotate(int[] nums, int k) {
+            k %= nums.length;
+            reverse(nums,0,nums.length - 1);//7,6,5,4,3,2,1
+            reverse(nums,k,nums.length - 1);//7,6,5,4,1,2,3
+            reverse(nums,0,k - 1);//4,5,6,7,1,2,3
+        }
+        public void reverse (int[] nums, int start, int end) {
+            while (start < end) {
+                //swap
+                int temp = nums[start];
+                nums[start] = nums[end];
+                nums[end] = temp;
+                start++;
+                end--;
+            }
+        }
+
+2.3满九归零的十进制进位问题：
+
+加一：
+
+        public int[] plusOne(int[] digits) {
+            for (int i = digits.length - 1; i >= 0; i--) {
+                if(digits[i] < 9){
+                    digits[i] = digits[i] + 1;
+                    return digits;
+                }
+                digits[i] = 0;
+            }
+            int[] res = new int[digits.length + 1];
+            res[0] = 1;
+            return res;
+        }
+
+
