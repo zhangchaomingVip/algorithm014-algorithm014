@@ -1,0 +1,43 @@
+1.动态规划
+状态方程：dp[i][j] = Math.min(grid[i][j - 1],grid[i - 1][j]) + grid[i][j];
+复杂度分析：O(n^2),O(n)
+
+`
+
+      public int minPathSum(int[][] grid) {
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[0].length; j++) {
+                    if( i == 0 && j == 0) continue;
+                    if (i == 0) grid[i][j] = grid[i][j - 1] + grid[i][j];
+                    else if (j == 0) grid[i][j] = grid[i - 1][j] + grid[i][j];
+                    else grid[i][j] = Math.min(grid[i][j - 1],grid[i - 1][j]) + grid[i][j];
+                }
+            }
+            return grid[grid.length - 1][grid[0].length - 1];
+      }
+`
+
+2.记忆化搜索
+复杂度分析：O(logn),O(n^2);
+
+`
+   
+    public int minPathSum(int[][] grid) {
+        return helper(grid, grid.length - 1, grid[0].length - 1 , new int[grid.length][grid[0].length]);
+    }
+
+    private int helper(int[][] grid, int r, int c, int[][] cache){
+        if (cache[r][c] != 0)
+            return cache[r][c];
+        if (r == 0 && c == 0){
+            return cache[r][c] = grid[r][c];
+        }
+        int up = Integer.MAX_VALUE, left = Integer.MAX_VALUE;
+        if (r != 0)
+            up = helper(grid, r-1, c, cache);
+        if (c!=0)
+            left = helper(grid, r, c-1, cache);
+        return cache[r][c] = Math.min(up, left )+ grid[r][c];
+    }
+
+`

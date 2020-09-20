@@ -49,8 +49,7 @@
     public ListNode detectCycle(ListNode head) {
         if(head == null || head.next == null) return null;
         ListNode slow = head;
-        ListNode fast = head;
-        while (fast.next != null && fast.next.next != null) {
+        ListNode fast = head;700000000000000000=l) {
             slow = slow.next;
             fast = fast.next.next;
             if(fast == slow) {
