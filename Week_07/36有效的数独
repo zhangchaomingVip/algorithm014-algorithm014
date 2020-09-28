@@ -1,0 +1,99 @@
+
+
+解法1：哈希数组
+三个哈希数组
+
+`
+
+      public boolean isValidSudoku(char[][] board) {
+        // init data
+        HashMap<Integer, Integer> [] rows = new HashMap[9];
+        HashMap<Integer, Integer> [] columns = new HashMap[9];
+        HashMap<Integer, Integer> [] boxes = new HashMap[9];
+        for (int i = 0; i < 9; i++) {
+          rows[i] = new HashMap<Integer, Integer>();
+          columns[i] = new HashMap<Integer, Integer>();
+          boxes[i] = new HashMap<Integer, Integer>();
+        }
+    
+        // validate a board
+        for (int i = 0; i < 9; i++) {
+          for (int j = 0; j < 9; j++) {
+            char num = board[i][j];
+            if (num != '.') {
+              int n = (int)num;
+              int box_index = (i / 3 ) * 3 + j / 3;
+    
+              // keep the current cell value
+              rows[i].put(n, rows[i].getOrDefault(n, 0) + 1);
+              columns[j].put(n, columns[j].getOrDefault(n, 0) + 1);
+              boxes[box_index].put(n, boxes[box_index].getOrDefault(n, 0) + 1);
+    
+              // check if this value has been already seen before
+              if (rows[i].get(n) > 1 || columns[j].get(n) > 1 || boxes[box_index].get(n) > 1)
+                return false;
+            }
+          }
+        }
+    
+        return true;
+      }
+`
+解法2：三个set
+注意下标计算
+
+`
+
+        public boolean isValidSudoku(char[][] board) {
+            for(int i = 0; i<9; i++){
+                HashSet<Character> rows = new HashSet<Character>();
+                HashSet<Character> columns = new HashSet<Character>();
+                HashSet<Character> cube = new HashSet<Character>();
+                for (int j = 0; j < 9;j++){
+                    if(board[i][j]!='.' && !rows.add(board[i][j]))
+                        return false;
+                    if(board[j][i]!='.' && !columns.add(board[j][i]))
+                        return false;
+                    int RowIndex = 3*(i/3);
+                    int ColIndex = 3*(i%3);
+                    if(board[RowIndex + j/3][ColIndex + j%3]!='.' && !cube.add(board[RowIndex + j/3][ColIndex + j%3]))
+                        return false;
+                }
+            }
+            return true;
+        }
+
+`
+
+解法2：嵌套循环
+这个操作实在是6,因为限制了棋盘格子数，直接遍历9个格子反而更快
+`
+      public boolean isValidSudoku(char[][] board) {
+            for(int i=0;i<9;i++)
+            {
+                for(int j=0;j<9;j++)
+                {
+                    if(board[i][j] == '.')continue;
+                    for(int k=8;k>j;k--)
+                    {
+                        if(board[i][j] == board[i][k])
+                            return false;
+                    }
+                    for(int k=8;k>i;k--)
+                    {
+                        if(board[i][j] == board[k][j])
+                            return false;
+                    }
+                    for(int k = i+1;k%3!=0;k++)
+                    {
+                        for(int h = j/3*3;h<j/3*3+3;h++)
+                        {
+                            if(board[i][j] == board[k][h])
+                                return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+`
